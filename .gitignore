@@ -1,7 +1,7 @@
 .env
 /venv/
 /dating/media/*
-!/dating/media/default.png
+!/dating/media/watermark.png
 /dating/db.sqlite3
 
 *.pyc

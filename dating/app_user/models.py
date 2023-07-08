@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+from django.conf import settings
+from PIL import Image, ImageDraw
 
 
 class CustomUserManager(BaseUserManager):
@@ -52,3 +56,18 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+@receiver(post_save, sender=CustomUser)
+def add_watermark(sender, instance, **kwargs):
+    if instance.avatar:
+        avatar_image = Image.open(instance.avatar)
+        watermark_image = Image.open(settings.MEDIA_ROOT / "watermark.png")
+
+        watermark_width = int(avatar_image.width * 0.5)
+        watermark_height = int(watermark_image.height * (watermark_width / watermark_image.width))
+        watermark_image = watermark_image.resize((watermark_width, watermark_height))
+
+        avatar_image.paste(watermark_image, (0, 0), watermark_image)
+
+        avatar_image.save(instance.avatar.path)
