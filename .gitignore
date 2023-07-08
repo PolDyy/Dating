@@ -2,6 +2,7 @@
 /venv/
 /dating/media/*
 !/dating/media/default.png
+/dating/db.sqlite3
 
 *.pyc
 *.egg-info
@@ -12,3 +13,4 @@
 *.iml
 
 /.idea
+
