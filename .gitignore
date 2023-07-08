@@ -1,0 +1,14 @@
+.env
+/venv/
+/dating/media/*
+!/dating/media/default.png
+
+*.pyc
+*.egg-info
+
+# Если вы программируете на Mac
+.DS_Store
+
+*.iml
+
+/.idea
