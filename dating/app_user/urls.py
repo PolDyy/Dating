@@ -10,4 +10,11 @@ urlpatterns = [
 
              }
          ), ),
+    path("list",
+         UserViewSet.as_view(
+             {
+                 "get": "list",
+
+             }
+         ), ),
 ]
