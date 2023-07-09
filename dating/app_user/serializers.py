@@ -9,8 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = [
             'id',
-            'is_active',
-            'is_staff',
             'email',
             'first_name',
             'last_name',
@@ -20,8 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             'id': {'read_only': True},
-            'is_active': {'read_only': True},
-            'is_staff': {'read_only': True},
             'first_name': {'min_length': 2},
             'last_name': {'min_length': 2},
             'password': {'write_only': True,  'min_length': 8,

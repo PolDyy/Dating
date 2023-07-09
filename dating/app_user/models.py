@@ -1,20 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.conf import settings
-from PIL import Image, ImageDraw
+from PIL import Image
 
+from services.watermark import set_water_mark
 
 class CustomUserManager(BaseUserManager):
     """
-    Custom user model manager where email is the unique identifiers
-    for authentication instead of usernames.
+    Менеджер модели CustomUser определяющая email как уникальный ключ для аутентификации.
     """
     def create_user(self, email, password, **extra_fields):
         """
-        Create and save a User with the given email and password.
+        Создает и сохраняет пользователя по email и password.
         """
         if not email:
             raise ValueError('Поле Email должно быть заполнено')
@@ -26,7 +25,7 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password, **extra_fields):
         """
-        Create and save a SuperUser with the given email and password.
+        Создает и сохраняет супер-пользователя по email и password.
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -60,14 +59,8 @@ class CustomUser(AbstractUser):
 
 @receiver(post_save, sender=CustomUser)
 def add_watermark(sender, instance, **kwargs):
+    """Сигнал для CustomUser, добавляющий к аватарке водный знак """
     if instance.avatar:
         avatar_image = Image.open(instance.avatar)
-        watermark_image = Image.open(settings.MEDIA_ROOT / "watermark.png")
-
-        watermark_width = int(avatar_image.width * 0.5)
-        watermark_height = int(watermark_image.height * (watermark_width / watermark_image.width))
-        watermark_image = watermark_image.resize((watermark_width, watermark_height))
-
-        avatar_image.paste(watermark_image, (0, 0), watermark_image)
-
+        avatar_image = set_water_mark(avatar_image)
         avatar_image.save(instance.avatar.path)
