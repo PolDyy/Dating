@@ -1,8 +1,7 @@
 from django.conf import settings
-from math import sin, cos, acos, asin, atan2, degrees, pi, sqrt
+from math import sin, cos, asin, atan2, pi, sqrt
 import requests
 import json
-#from geopy import distance
 
 
 class GeoInterface:

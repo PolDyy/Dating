@@ -23,7 +23,7 @@ class UserViewSet(ListModelMixin,
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        longitude, latitude = GeoInterface.get_coordinators(self.request)
+        longitude, latitude = self.request.data['longitude'], self.request.data['latitude']
         context['longitude'] = longitude
         context['latitude'] = latitude
         return context
