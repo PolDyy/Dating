@@ -9,7 +9,7 @@ SECRET_KEY = getenv("SECRET_KEY")
 
 DEBUG = getenv("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['poldy.pythonanywhere.com']
 
 
 INSTALLED_APPS = [
