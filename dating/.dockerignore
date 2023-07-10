@@ -1,0 +1,11 @@
+../.idea
+README.md
+
+../.gitignore
+.editorconfig
+venv
+
+__pycahce__
+db.sqlite3
+.dockerignore
+

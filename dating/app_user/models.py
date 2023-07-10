@@ -47,6 +47,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     avatar = models.ImageField(upload_to='avatars/')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    longitude = models.FloatField(default=0.0)
+    latitude = models.FloatField(default=0.0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
