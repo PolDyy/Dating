@@ -7,7 +7,7 @@ load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = getenv("SECRET_KEY")
 
-DEBUG = getenv("DEBUG")
+DEBUG = int(getenv("DEBUG"))
 
 ALLOWED_HOSTS = ['poldy.pythonanywhere.com', '127.0.0.1']
 

@@ -34,9 +34,9 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def get_distance(self, obj):
-
-        longitude_1 = radians(self.context.get('longitude'))
-        latitude_1 = radians(self.context.get('latitude'))
+        request_data = self.context['request'].data
+        longitude_1 = request_data.get('longitude')
+        latitude_1 = request_data.get('latitude')
         longitude_2 = obj.longitude
         latitude_2 = obj.latitude
 
@@ -44,25 +44,8 @@ class UserSerializer(serializers.ModelSerializer):
         return distance
 
     def create(self, validated_data):
-        email = validated_data['email']
-        first_name = validated_data['first_name']
-        last_name = validated_data['last_name']
-        gender = validated_data['gender']
-        avatar = validated_data['avatar']
-        password = validated_data['password']
+        request_data = self.context['request'].data
+        validated_data['longitude'] = request_data.get('longitude')
+        validated_data['latitude'] = request_data.get('latitude')
 
-        longitude = radians(self.context.get('longitude'))
-        latitude = radians(self.context.get('latitude'))
-
-        user = CustomUser.objects.create_user(
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            gender=gender,
-            avatar=avatar,
-            password=password,
-            longitude=longitude,
-            latitude=latitude,
-        )
-
-        return user
+        return super().create(validated_data)

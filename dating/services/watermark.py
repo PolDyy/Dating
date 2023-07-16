@@ -5,6 +5,8 @@ from PIL import Image
 def set_water_mark(some_image):
     """Устанавливает водный знак на изображение """
 
+    some_image = Image.open(some_image)
+
     watermark_image = Image.open(settings.MEDIA_ROOT / "watermark.png")
 
     watermark_width = int(some_image.width * 0.5)

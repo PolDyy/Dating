@@ -1,7 +1,8 @@
 from django.conf import settings
-from math import sin, cos, asin, atan2, pi, sqrt
+from math import sin, cos, asin, atan2, pi, sqrt, radians
 import requests
 import json
+import math
 
 
 class GeoInterface:
@@ -15,23 +16,30 @@ class GeoInterface:
     @classmethod
     def get_coordinators(cls, user_request) -> tuple:
         """ Получить координаты из запроса """
-        ip = cls._get_ip(user_request)
-        response = requests.get("".join((settings.GEO_API_URL, f"&ip_address={ip}")))
-        #response = requests.get(settings.GEO_API_URL)
+
+        if settings.DEBUG:
+            response = requests.get(settings.GEO_API_URL)
+        else:
+            ip = cls._get_ip(user_request)
+            response = requests.get("".join((settings.GEO_API_URL, f"&ip_address={ip}")))
         content = json.loads(response.content)
-        longitude = content.get('longitude')
-        latitude = content.get('latitude')
+        longitude = radians(content.get('longitude'))
+        latitude = radians(content.get('latitude'))
         return longitude, latitude
 
     @classmethod
     def get_distance(cls, lon_1, lat_1, lon_2, lat_2):
         """ Получить дистанцию между 2мя точками"""
+
         d_lat = lat_2 - lat_1
         d_lon = lon_2 - lon_1
-        distance = 2 * cls.EARTH_RADIUS * asin(sqrt(
-            sin(d_lat / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(d_lon / 2) ** 2))
 
-        distance = round(distance/1000, 1)
+        a = math.sin(d_lat / 2) ** 2 + math.cos(lat_1) * math.cos(lat_2) * math.sin(d_lon / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        distance = cls.EARTH_RADIUS * c
+
+        distance = round(distance, 1)
         return distance
 
     @classmethod
@@ -53,7 +61,7 @@ class GeoInterface:
         """ Получаем координаты точки по сторонам света, которые находятся
             на заданном расстоянии от заданной точки
          """
-        distance *= 1000
+
         direction_lat_rad = asin(sin(lat_rad) * cos(distance / cls.EARTH_RADIUS) +
                                  cos(lat_rad) * sin(distance / cls.EARTH_RADIUS) * cos(direction_rad))
 

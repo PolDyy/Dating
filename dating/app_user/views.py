@@ -16,14 +16,8 @@ class UserViewSet(ListModelMixin,
     filterset_class = CustomUserFilter
 
     def initial(self, request, *args, **kwargs):
-        longitude, latitude = GeoInterface.get_coordinators(self.request)
+        longitude, latitude = GeoInterface.get_coordinators(request)
         request.data['longitude'] = longitude
         request.data['latitude'] = latitude
-        super().initial(request, *args, *kwargs)
+        super().initial(request, *args, **kwargs)
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        longitude, latitude = self.request.data['longitude'], self.request.data['latitude']
-        context['longitude'] = longitude
-        context['latitude'] = latitude
-        return context

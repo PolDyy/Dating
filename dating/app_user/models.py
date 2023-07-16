@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from PIL import Image
 
 from services.watermark import set_water_mark
+
 
 class CustomUserManager(BaseUserManager):
     """
@@ -60,9 +60,9 @@ class CustomUser(AbstractUser):
 
 
 @receiver(post_save, sender=CustomUser)
-def add_watermark(sender, instance, **kwargs):
+def add_watermark(sender, instance, created, **kwargs):
     """Сигнал для CustomUser, добавляющий к аватарке водный знак """
-    if instance.avatar:
-        avatar_image = Image.open(instance.avatar)
+    avatar_image = instance.avatar
+    if avatar_image and created:
         avatar_image = set_water_mark(avatar_image)
         avatar_image.save(instance.avatar.path)

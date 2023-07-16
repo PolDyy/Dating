@@ -1,4 +1,4 @@
 SECRET_KEY = 'Your secret key'
 EMAIL_HOST_PASSWORD = "host password"
 EMAIL_HOST_USER = "host user email"
-DEBUG = False
+DEBUG = 0 or 1

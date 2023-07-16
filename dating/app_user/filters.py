@@ -16,8 +16,10 @@ class CustomUserFilter(filters.FilterSet):
 
     def fiter_by_distance(self, queryset, name, value):
 
-        longitude_1 = radians(self.request.data.get('longitude'))
-        latitude_1 = radians(self.request.data.get('latitude'))
+        request_data = self.request.data
+
+        longitude_1, latitude_1 = request_data.get('longitude'), request_data.get('latitude')
+
         cords = GeoInterface.calculate_coordinates_in_directions(latitude_1, longitude_1, float(value))
         latitudes = cords['latitude']
         longitudes = cords['longitude']
