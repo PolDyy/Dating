@@ -2,7 +2,7 @@ from django.conf import settings
 from math import sin, cos, asin, atan2, pi, sqrt, radians
 import requests
 import json
-import math
+
 
 
 class GeoInterface:
@@ -21,8 +21,9 @@ class GeoInterface:
             response = requests.get(settings.GEO_API_URL)
         else:
             ip = cls._get_ip(user_request)
-            response = requests.get("".join((settings.GEO_API_URL, f"&ip_address={ip}")))
+            response = requests.get("".join((settings.GEO_API_URL, ip)))
         content = json.loads(response.content)
+
         longitude = radians(content.get('longitude'))
         latitude = radians(content.get('latitude'))
         return longitude, latitude
@@ -34,8 +35,8 @@ class GeoInterface:
         d_lat = lat_2 - lat_1
         d_lon = lon_2 - lon_1
 
-        a = math.sin(d_lat / 2) ** 2 + math.cos(lat_1) * math.cos(lat_2) * math.sin(d_lon / 2) ** 2
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        a = sin(d_lat / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(d_lon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         distance = cls.EARTH_RADIUS * c
 
