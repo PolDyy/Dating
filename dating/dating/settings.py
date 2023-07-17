@@ -128,6 +128,5 @@ EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD')
 
 
 #Geo
-GEO_API_KEY = getenv("GEO_API_KEY")
-GEO_API_URL = 'https://ipgeolocation.abstractapi.com/v1/?api_key=' + GEO_API_KEY
+GEO_API_URL = 'https://ipwho.is/'
 

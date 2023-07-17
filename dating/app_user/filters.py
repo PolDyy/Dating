@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from math import radians
+
 from django.core import validators
 
 from services.geo.geo import GeoInterface

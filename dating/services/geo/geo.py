@@ -21,8 +21,9 @@ class GeoInterface:
             response = requests.get(settings.GEO_API_URL)
         else:
             ip = cls._get_ip(user_request)
-            response = requests.get("".join((settings.GEO_API_URL, f"&ip_address={ip}")))
+            response = requests.get("".join((settings.GEO_API_URL, ip)))
         content = json.loads(response.content)
+
         longitude = radians(content.get('longitude'))
         latitude = radians(content.get('latitude'))
         return longitude, latitude
