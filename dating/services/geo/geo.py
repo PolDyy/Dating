@@ -4,7 +4,6 @@ import requests
 import json
 
 
-
 class GeoInterface:
 
     EARTH_RADIUS = 6356.7523
@@ -46,28 +45,58 @@ class GeoInterface:
     @classmethod
     def calculate_coordinates_in_directions(cls, latitude, longitude, radius):
         """ Рассчитываем координаты в направлении север, юг, восток и запад """
-        north_lat, north_lon = cls._calculate_coordinate(latitude, longitude, radius, cls.NORTH_RAD)
-        south_lat, south_lon = cls._calculate_coordinate(latitude, longitude, radius, cls.SOUTH_RAD)
-        east_lat, east_lon = cls._calculate_coordinate(latitude, longitude, radius, cls.EAST_RAD)
-        west_lat, west_lon = cls._calculate_coordinate(latitude, longitude, radius, cls.WEST_RAD)
+
+        distance = radius / cls.EARTH_RADIUS
+
+        if radius <= 100:
+            data_cord = cls._short_range(latitude, longitude, distance)
+            return data_cord
+
+        data_cord = cls._long_distance(latitude, longitude, distance)
+
+        return data_cord
+
+    @staticmethod
+    def _short_range(latitude, longitude, distance):
+        """ Функция рассчитывающая координаты для поиска в ближнем диапазоне"""
+
+        east_lon = longitude + distance / cos(latitude)
+        west_lon = longitude - distance / cos(latitude)
+        north_lat = latitude + distance
+        south_lat = latitude - distance
 
         data_cord = {
             "latitude": (north_lat, south_lat),
             "longitude": (east_lon, west_lon)
         }
+
         return data_cord
 
     @classmethod
-    def _calculate_coordinate(cls, lat_rad, lon_rad, distance, direction_rad):
+    def _long_distance(cls, latitude, longitude, distance):
+        north_lat, north_lon = cls._calculate_coordinate(latitude, longitude, distance, cls.NORTH_RAD)
+        south_lat, south_lon = cls._calculate_coordinate(latitude, longitude, distance, cls.SOUTH_RAD)
+        east_lat, east_lon = cls._calculate_coordinate(latitude, longitude, distance, cls.EAST_RAD)
+        west_lat, west_lon = cls._calculate_coordinate(latitude, longitude, distance, cls.WEST_RAD)
+
+        data_cord = {
+            "latitude": (north_lat, south_lat),
+            "longitude": (east_lon, west_lon)
+        }
+
+        return data_cord
+
+    @staticmethod
+    def _calculate_coordinate(lat_rad, lon_rad, distance, direction_rad):
         """ Получаем координаты точки по сторонам света, которые находятся
             на заданном расстоянии от заданной точки
          """
 
-        direction_lat_rad = asin(sin(lat_rad) * cos(distance / cls.EARTH_RADIUS) +
-                                 cos(lat_rad) * sin(distance / cls.EARTH_RADIUS) * cos(direction_rad))
+        direction_lat_rad = asin(sin(lat_rad) * cos(distance) +
+                                 cos(lat_rad) * sin(distance) * cos(direction_rad))
 
-        direction_lon_rad = lon_rad + atan2(sin(direction_rad) * sin(distance / cls.EARTH_RADIUS) * cos(lat_rad),
-                                            cos(distance / cls.EARTH_RADIUS) - sin(lat_rad) * sin(direction_lat_rad))
+        direction_lon_rad = lon_rad + atan2(sin(direction_rad) * sin(distance) * cos(lat_rad),
+                                            cos(distance) - sin(lat_rad) * sin(direction_lat_rad))
     
         direction_latitude = direction_lat_rad
         direction_longitude = direction_lon_rad
