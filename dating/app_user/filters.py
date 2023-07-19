@@ -8,7 +8,9 @@ from .models import CustomUser
 
 class CustomUserFilter(filters.FilterSet):
     distance = filters.NumberFilter(field_name="distance", method='fiter_by_distance',
-                                    validators=[validators.MinValueValidator(0)], label='Distance')
+                                    validators=[validators.MinValueValidator(0),
+                                                validators.MaxValueValidator(GeoInterface.EARTH_RADIUS)],
+                                    label='Distance')
 
     class Meta:
         model = CustomUser
